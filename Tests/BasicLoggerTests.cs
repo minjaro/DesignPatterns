@@ -1,14 +1,16 @@
+using Singleton;
+using Tests.Steps;
 using Xunit;
 
 namespace Tests
 {
     public class BasicLoggerTests
     {
-        private readonly BasicLoggerSteps _steps;
+        private readonly LoggerSteps _steps;
 
         public BasicLoggerTests()
         {
-            _steps = new BasicLoggerSteps();
+            _steps = new LoggerSteps(BasicLogger.Instance);
         }
 
         [Fact]
@@ -32,6 +34,14 @@ namespace Tests
             _steps.GivenAnEmptyLogger();
             _steps.WhenILogAFewMessages();
             _steps.ThenTheseMessagesAreLoggedSuccessfully();
+        }
+
+        [Fact]
+        public void BasicLogger_IsNotThreadSafe()
+        {
+            _steps.GivenAnEmptyLogger();
+            _steps.WhenILogAFewMessagesFromDifferentThreads();
+            _steps.ThenSomeOfTheLoggedMessagesAreMissing();
         }
     }
 }
