@@ -1,5 +1,6 @@
-using Singleton;
+using Singleton.Logger;
 using Tests.Steps;
+using Tests.TestData;
 using Xunit;
 
 namespace Tests
@@ -10,38 +11,42 @@ namespace Tests
 
         public BasicLoggerTests()
         {
-            _steps = new LoggerSteps(BasicLogger.Instance);
+            _steps = new LoggerSteps();
         }
 
-        [Fact]
-        public void BasicLogger_IsEmptyAfterResetting()
+        [Theory]
+        [ClassData(typeof(BasicLoggerTestData))]
+        public void BasicLogger_IsEmptyAfterResetting(ILogger logger)
         {
-            _steps.GivenAnEmptyLogger();
-            _steps.ThenTheLoggerHasNoMessagesLogged();
+            _steps.GivenAnEmptyLogger(logger);
+            _steps.ThenThisLoggerHasNoMessagesLogged(logger);
         }
 
-        [Fact]
-        public void BasicLogger_CanLogAMessage()
+        [Theory]
+        [ClassData(typeof(BasicLoggerTestData))]
+        public void BasicLogger_CanLogAMessage(ILogger logger)
         {
-            _steps.GivenAnEmptyLogger();
-            _steps.WhenILogAMessage();
-            _steps.ThenThisMessageIsLoggedSuccessfully();
+            _steps.GivenAnEmptyLogger(logger);
+            _steps.WhenILogAMessage(logger);
+            _steps.ThenThisMessageIsLoggedSuccessfully(logger);
         }
 
-        [Fact]
-        public void BasicLogger_CanLogMultipleMessages()
+        [Theory]
+        [ClassData(typeof(BasicLoggerTestData))]
+        public void BasicLogger_CanLogMultipleMessages(ILogger logger)
         {
-            _steps.GivenAnEmptyLogger();
-            _steps.WhenILogAFewMessages();
-            _steps.ThenTheseMessagesAreLoggedSuccessfully();
+            _steps.GivenAnEmptyLogger(logger);
+            _steps.WhenILogAFewMessages(logger);
+            _steps.ThenTheseMessagesAreLoggedSuccessfully(logger);
         }
 
-        [Fact]
-        public void BasicLogger_IsNotThreadSafe()
+        [Theory]
+        [ClassData(typeof(BasicLoggerTestData))]
+        public void BasicLogger_IsNotThreadSafe(ILogger logger)
         {
-            _steps.GivenAnEmptyLogger();
-            _steps.WhenILogAFewMessagesFromDifferentThreads();
-            _steps.ThenSomeOfTheLoggedMessagesAreMissing();
+            _steps.GivenAnEmptyLogger(logger);
+            _steps.WhenILogAFewMessagesFromDifferentThreads(logger);
+            _steps.ThenSomeOfTheLoggedMessagesAreMissing(logger);
         }
     }
 }

@@ -5,86 +5,81 @@ using Xunit;
 
 namespace Tests.Steps
 {
+    /// <summary>
+    /// Encapsulates reusable test operations on various interpretation of the Singleton.
+    /// Please note that the tested ILogger instance is injected as an operation argument.
+    /// </summary>
     internal class LoggerSteps
     {
-        private const string MESSAGE_TO_LOG = "TestMessage123#%";
-        private const string EXPECTED_MESSAGE = "TestMessage123#%\r\n";
         private const int PAUSE_IN_MILISECONDS = 500;
+        private const string TIMELY_OPERATION_ID1 = "Thread1";
+        private const string TIMELY_OPERATION_ID2 = "Thread2";
 
-        private const string MULTI_MESSAGE1 = "TestMessage1!";
-        private const string MULTI_MESSAGE2 = "2TestMessage&";
-        private const string MULTI_MESSAGE3 = "Test_3Message^^";
-        private const string MULTI_EXPECTED_MESSAGE = "TestMessage1!\r\n2TestMessage&\r\nTest_3Message^^\r\n";
-        private const string THREAD_SAFE_EXPECTED_LOG = 
-            "Thread1: Operation #1 Completed.\r\n" +
-            "Thread2: Operation #1 Completed.\r\n" +
-            "Thread1: Operation #2 Completed.\r\n" +
-            "Thread2: Operation #2 Completed.\r\n" +
-            "Thread1: Operation #3 Completed.\r\n" +
-            "Thread2: Operation #3 Completed.\r\n" +
-            "Thread1: Operation #4 Completed.\r\n" +
-            "Thread2: Operation #4 Completed.\r\n" +
-            "Thread1: Operation #5 Completed.\r\n" +
-            "Thread2: Operation #5 Completed.\r\n";
-
-        private ILogger _singletonLogger;
-
-        public LoggerSteps(ILogger logger)
+        private class TestTimelyOperation
         {
-            _singletonLogger = logger;
+            public ILogger Logger { get; }
+            public string Identifier { get; }
+            public int NumberOfOperations { get; }
+
+            public TestTimelyOperation(ILogger logger, string identifier, int numberOfOperations)
+            {
+                Logger = logger;
+                Identifier = identifier;
+                NumberOfOperations = numberOfOperations;
+            }
         }
 
-        public void GivenAnEmptyLogger()
+        public void GivenAnEmptyLogger(ILogger logger)
         {
-            _singletonLogger.Reset();
+            logger.Reset();
         }
 
-        public void WhenILogAMessage()
+        public void WhenILogAMessage(ILogger logger)
         {
-            _singletonLogger.Log(MESSAGE_TO_LOG);
+            logger.Log(ExpectedData.MESSAGE_TO_LOG);
         }
 
-        public void WhenILogAFewMessages()
+        public void WhenILogAFewMessages(ILogger logger)
         {
-            _singletonLogger.Log(MULTI_MESSAGE1);
-            _singletonLogger.Log(MULTI_MESSAGE2);
-            _singletonLogger.Log(MULTI_MESSAGE3);
+            logger.Log(ExpectedData.MULTI_MESSAGE1);
+            logger.Log(ExpectedData.MULTI_MESSAGE2);
+            logger.Log(ExpectedData.MULTI_MESSAGE3);
         }
 
-        public void WhenILogAFewMessagesFromDifferentThreads()
+        public void WhenILogAFewMessagesFromDifferentThreads(ILogger logger)
         {
-            Task task1 = Task.Factory.StartNew(() => MockTimelyOperations("Thread1", 5));
-            Task task2 = Task.Factory.StartNew(() => MockTimelyOperations("Thread2", 5));
+            Task task1 = Task.Factory.StartNew(() => MockTimelyOperations(new TestTimelyOperation(logger, TIMELY_OPERATION_ID1, 5)));
+            Task task2 = Task.Factory.StartNew(() => MockTimelyOperations(new TestTimelyOperation(logger, TIMELY_OPERATION_ID2, 5)));
             Task.WaitAll(task1, task2);
         }
 
-        public void ThenTheLoggerHasNoMessagesLogged()
+        public void ThenThisLoggerHasNoMessagesLogged(ILogger logger)
         {
-            Assert.Equal(string.Empty, _singletonLogger.ShowLog());
+            Assert.Equal(string.Empty, logger.ShowLog());
         }
 
-        public void ThenThisMessageIsLoggedSuccessfully()
+        public void ThenThisMessageIsLoggedSuccessfully(ILogger logger)
         {
-            Assert.Equal(EXPECTED_MESSAGE, _singletonLogger.ShowLog());
+            Assert.Equal(ExpectedData.EXPECTED_MESSAGE, logger.ShowLog());
         }
 
-        public void ThenTheseMessagesAreLoggedSuccessfully()
+        public void ThenTheseMessagesAreLoggedSuccessfully(ILogger logger)
         {
-            Assert.Equal(MULTI_EXPECTED_MESSAGE, _singletonLogger.ShowLog());
+            Assert.Equal(ExpectedData.MULTI_EXPECTED_MESSAGE, logger.ShowLog());
         }
 
-        public void ThenSomeOfTheLoggedMessagesAreMissing()
+        public void ThenSomeOfTheLoggedMessagesAreMissing(ILogger logger)
         {
-            string currentLog = _singletonLogger.ShowLog();
-            Assert.NotEqual(THREAD_SAFE_EXPECTED_LOG, currentLog);
+            string currentLog = logger.ShowLog();
+            Assert.NotEqual(ExpectedData.THREAD_SAFE_EXPECTED_LOG, currentLog);
         }
 
-        private void MockTimelyOperations(string identifier, int numberOfOperations)
+        private void MockTimelyOperations(TestTimelyOperation timelyOperation)
         {
-            for (int i = 1; i <= numberOfOperations; i++)
+            for (int i = 1; i <= timelyOperation.NumberOfOperations; i++)
             {
                 Thread.Sleep(PAUSE_IN_MILISECONDS);
-                _singletonLogger.Log($"{identifier}: Operation #{i} Completed.");
+                timelyOperation.Logger.Log($"{timelyOperation.Identifier}: Operation #{i} Completed.");
             }
         }
     }
