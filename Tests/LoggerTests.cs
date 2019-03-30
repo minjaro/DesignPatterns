@@ -5,17 +5,18 @@ using Xunit;
 
 namespace Tests
 {
-    public class BasicLoggerTests
+    public class LoggerTests
     {
         private readonly LoggerSteps _steps;
 
-        public BasicLoggerTests()
+        public LoggerTests()
         {
             _steps = new LoggerSteps();
         }
 
         [Theory]
         [ClassData(typeof(BasicLoggerTestData))]
+        [ClassData(typeof(StaticLoggerTestData))]
         public void BasicLogger_IsEmptyAfterResetting(ILogger logger)
         {
             _steps.GivenAnEmptyLogger(logger);
@@ -24,6 +25,7 @@ namespace Tests
 
         [Theory]
         [ClassData(typeof(BasicLoggerTestData))]
+        [ClassData(typeof(StaticLoggerTestData))]
         public void BasicLogger_CanLogAMessage(ILogger logger)
         {
             _steps.GivenAnEmptyLogger(logger);
@@ -33,20 +35,12 @@ namespace Tests
 
         [Theory]
         [ClassData(typeof(BasicLoggerTestData))]
+        [ClassData(typeof(StaticLoggerTestData))]
         public void BasicLogger_CanLogMultipleMessages(ILogger logger)
         {
             _steps.GivenAnEmptyLogger(logger);
             _steps.WhenILogAFewMessages(logger);
             _steps.ThenTheseMessagesAreLoggedSuccessfully(logger);
-        }
-
-        [Theory]
-        [ClassData(typeof(BasicLoggerTestData))]
-        public void BasicLogger_IsNotThreadSafe(ILogger logger)
-        {
-            _steps.GivenAnEmptyLogger(logger);
-            _steps.WhenILogAFewMessagesFromDifferentThreads(logger);
-            _steps.ThenSomeOfTheLoggedMessagesAreMissing(logger);
         }
     }
 }

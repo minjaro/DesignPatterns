@@ -1,6 +1,8 @@
 ﻿using Singleton.Logger;
+using Tests.TestData;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using Xunit;
 
 namespace Tests.Steps
@@ -46,13 +48,6 @@ namespace Tests.Steps
             logger.Log(ExpectedData.MULTI_MESSAGE3);
         }
 
-        public void WhenILogAFewMessagesFromDifferentThreads(ILogger logger)
-        {
-            Task task1 = Task.Factory.StartNew(() => MockTimelyOperations(new TestTimelyOperation(logger, TIMELY_OPERATION_ID1, 5)));
-            Task task2 = Task.Factory.StartNew(() => MockTimelyOperations(new TestTimelyOperation(logger, TIMELY_OPERATION_ID2, 5)));
-            Task.WaitAll(task1, task2);
-        }
-
         public void ThenThisLoggerHasNoMessagesLogged(ILogger logger)
         {
             Assert.Equal(string.Empty, logger.ShowLog());
@@ -66,21 +61,6 @@ namespace Tests.Steps
         public void ThenTheseMessagesAreLoggedSuccessfully(ILogger logger)
         {
             Assert.Equal(ExpectedData.MULTI_EXPECTED_MESSAGE, logger.ShowLog());
-        }
-
-        public void ThenSomeOfTheLoggedMessagesAreMissing(ILogger logger)
-        {
-            string currentLog = logger.ShowLog();
-            Assert.NotEqual(ExpectedData.THREAD_SAFE_EXPECTED_LOG, currentLog);
-        }
-
-        private void MockTimelyOperations(TestTimelyOperation timelyOperation)
-        {
-            for (int i = 1; i <= timelyOperation.NumberOfOperations; i++)
-            {
-                Thread.Sleep(PAUSE_IN_MILISECONDS);
-                timelyOperation.Logger.Log($"{timelyOperation.Identifier}: Operation #{i} Completed.");
-            }
         }
     }
 }

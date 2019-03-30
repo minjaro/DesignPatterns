@@ -3,7 +3,7 @@
 namespace Singleton
 {
     /// <summary>
-    /// A basic, lazy loaded, not thread-safe version of a Singleton with a gentle touch of the decorator pattern.
+    /// A basic, lazy loaded, thread-safe version of a Singleton.
     ///
     /// If you must use a Singleton, consider whether you need a thread-safe version. Maybe your application is small
     /// and simple enough, to omit these threading-related, costly operations. Or maybe you don't need a singleton at all?
@@ -14,13 +14,23 @@ namespace Singleton
     {
         private static BasicLogger _instance;
         private static ILogger _logger;
+        private static object _lock = new object();
 
         public static BasicLogger Instance
         {
             get
             {
-                if (_instance == null)
-                    _instance = new BasicLogger();
+                if(_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        if (_instance == null)
+                        {
+                            _instance = new BasicLogger();
+                        }
+                    }
+                }
+
                 return _instance;
             }
         }
@@ -38,17 +48,27 @@ namespace Singleton
 
         public void Log(string message)
         {
-            _logger.Log(message);
+            lock(_lock)
+            {
+                _logger.Log(message);
+            }
         }
 
         public string ShowLog()
         {
-            return _logger.ShowLog();
+            lock(_lock)
+            {
+                return _logger.ShowLog();
+            }
+            
         }
 
         public void Reset()
         {
-            _logger.Reset();
+            lock(_lock)
+            {
+                _logger.Reset();
+            }
         }
     }
 }

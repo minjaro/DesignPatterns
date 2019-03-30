@@ -3,7 +3,8 @@
 namespace Singleton
 {
     /// <summary>
-    /// This variant of a singleton is not lazy loaded, but thread safe.
+    /// A signleton that uses field initialization to create the instance.
+    /// Singleton creation is thread safe.
     /// </summary>
     public class StaticLogger : ILogger
     {
