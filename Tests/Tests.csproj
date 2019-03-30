@@ -16,4 +16,10 @@
     <ProjectReference Include="..\Sources\Singleton\Singleton.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="System">
+      <HintPath>System</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
