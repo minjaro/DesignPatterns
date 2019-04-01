@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Sources\FactoryMethod\FactoryMethod.csproj" />
     <ProjectReference Include="..\Sources\Singleton\Singleton.csproj" />
   </ItemGroup>
 

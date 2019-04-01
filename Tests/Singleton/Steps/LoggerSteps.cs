@@ -1,11 +1,8 @@
 ﻿using Singleton.Logger;
-using Tests.TestData;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Diagnostics;
+using Tests.TestData.Singleton;
 using Xunit;
 
-namespace Tests.Steps
+namespace Tests.Steps.Singleton
 {
     /// <summary>
     /// Encapsulates reusable test operations on various interpretation of the Singleton.
@@ -13,10 +10,6 @@ namespace Tests.Steps
     /// </summary>
     internal class LoggerSteps
     {
-        private const int PAUSE_IN_MILISECONDS = 500;
-        private const string TIMELY_OPERATION_ID1 = "Thread1";
-        private const string TIMELY_OPERATION_ID2 = "Thread2";
-
         private class TestTimelyOperation
         {
             public ILogger Logger { get; }
@@ -38,14 +31,14 @@ namespace Tests.Steps
 
         public void WhenILogAMessage(ILogger logger)
         {
-            logger.Log(ExpectedData.MESSAGE_TO_LOG);
+            logger.Log(TestData.Singleton.TestData.MESSAGE_TO_LOG);
         }
 
         public void WhenILogAFewMessages(ILogger logger)
         {
-            logger.Log(ExpectedData.MULTI_MESSAGE1);
-            logger.Log(ExpectedData.MULTI_MESSAGE2);
-            logger.Log(ExpectedData.MULTI_MESSAGE3);
+            logger.Log(TestData.Singleton.TestData.MULTI_MESSAGE1);
+            logger.Log(TestData.Singleton.TestData.MULTI_MESSAGE2);
+            logger.Log(TestData.Singleton.TestData.MULTI_MESSAGE3);
         }
 
         public void ThenThisLoggerHasNoMessagesLogged(ILogger logger)
@@ -55,12 +48,12 @@ namespace Tests.Steps
 
         public void ThenThisMessageIsLoggedSuccessfully(ILogger logger)
         {
-            Assert.Equal(ExpectedData.EXPECTED_MESSAGE, logger.ShowLog());
+            Assert.Equal(TestData.Singleton.TestData.EXPECTED_MESSAGE, logger.ShowLog());
         }
 
         public void ThenTheseMessagesAreLoggedSuccessfully(ILogger logger)
         {
-            Assert.Equal(ExpectedData.MULTI_EXPECTED_MESSAGE, logger.ShowLog());
+            Assert.Equal(TestData.Singleton.TestData.MULTI_EXPECTED_MESSAGE, logger.ShowLog());
         }
     }
 }

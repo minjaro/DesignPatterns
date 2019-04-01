@@ -1,15 +1,15 @@
 using Singleton.Logger;
-using Tests.Steps;
-using Tests.TestData;
+using Tests.Steps.Singleton;
+using Tests.TestData.Singleton;
 using Xunit;
 
 namespace Tests
 {
-    public class LoggerTests
+    public class Singleton_LoggerTests
     {
         private readonly LoggerSteps _steps;
 
-        public LoggerTests()
+        public Singleton_LoggerTests()
         {
             _steps = new LoggerSteps();
         }

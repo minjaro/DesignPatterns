@@ -1,6 +1,6 @@
-﻿namespace Tests.TestData
+﻿namespace Tests.TestData.Singleton
 {
-    internal static class ExpectedData
+    internal static class TestData
     {
         public const string MESSAGE_TO_LOG = "TestMessage123#%";
         public const string EXPECTED_MESSAGE = "TestMessage123#%\r\n";
