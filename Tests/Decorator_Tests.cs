@@ -16,7 +16,7 @@ namespace Tests
             car = new AutomaticGearbox(car);
 
             // Then
-            Assert.Equal(114201, car.GetCost());
+            Assert.Equal(114200, car.GetCost());
         }
     }
 }
