@@ -13,7 +13,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Sources\Decorator\Decorator.csproj" />
+    <ProjectReference Include="..\Sources\FactoryMethod\FactoryMethod.csproj" />
     <ProjectReference Include="..\Sources\Singleton\Singleton.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System">
+      <HintPath>System</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
